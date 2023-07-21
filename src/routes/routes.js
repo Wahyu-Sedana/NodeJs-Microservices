@@ -15,5 +15,7 @@ router.post('/deleteKategori', kategoriController.deleteKategori)
 
 router.post('/addTransaksi', transaksiController.addTransaksi)
 router.get('/getTransaksi', transaksiController.getTransaksi)
+router.post('/updateTransaksi', transaksiController.updateTransaksi)
+router.post('/deleteTransaksi', transaksiController.deleteTransaksi)
 
 module.exports = router

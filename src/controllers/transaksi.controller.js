@@ -18,7 +18,6 @@ const addTransaksi = async (req, res) => {
         if(addTransaksi){
             response.success = true
             response.message = 'Berhasil menambahkan transaksi'
-            response.data = addTransaksi
         }
     } catch (error) {
         console.log(error);
@@ -31,7 +30,7 @@ const addTransaksi = async (req, res) => {
 }
 
 const getTransaksi = async (req, res) => {
-    let { id_user, tgl_dari, tgl_sampai } = req.params
+    let { id_user } = req.body
     try {
         const queryReadKategori = `SELECT k._id_jenis as id_jenis, k._kategori as kategori, 
                             t._id_transaksi as id_transaksi, t._jumlah as jumlah, t._catatan as catatan, 
@@ -60,4 +59,43 @@ const getTransaksi = async (req, res) => {
     return res.status(status).send(response)
 }
 
-module.exports = { addTransaksi, getTransaksi }
+const updateTransaksi = async (req, res) => {
+    let { id_kategori, jumlah, tanggal, catatan } = req.body
+    try {
+        const queryUpdateTransaksi = `UPDATE transaksi_ SET _id_kategori= id_kategori, _jumlah= :jumlah, _tanggal= :tanggal,
+                                    _catatan= :catatan WHERE _id_transaksi= :id_transaksi`
+        const updateTransaksi = await query(queryUpdateTransaksi, { id_kategori, jumlah, tanggal, catatan })
+        if(updateTransaksi){
+            response.success = true;
+            response.message = 'Berhasil update transaksi'
+        }
+    } catch (error) {
+        console.log(error);
+        status = 500
+        response.status = 500
+        response.success = false
+        response.message = error
+    }
+    return res.status(status).send(response)
+}
+
+const deleteTransaksi = async (req, res) => {
+    let { id_transaksi } = req.body
+    try {
+        const queryDeleteTransaksi = `DELETE FROM transaksi_ WHERE _id_transaksi= :id_transaksi`
+        const deleteTransaksi = await query(queryDeleteTransaksi, { id_transaksi })
+        if(deleteTransaksi){
+            response.success = true;
+            response.message = 'Berhasil delete transaksi'
+        }
+    } catch (error) {
+        console.log(error);
+        status = 500
+        response.status = 500
+        response.success = false
+        response.message = error
+    }
+    return res.status(status).send(response)
+}
+
+module.exports = { addTransaksi, getTransaksi, updateTransaksi, deleteTransaksi }

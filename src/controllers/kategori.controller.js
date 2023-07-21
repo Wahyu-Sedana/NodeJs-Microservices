@@ -27,7 +27,6 @@ const addKategori = async (req, res) => {
             console.log(addKategori);
             response.success = true
             response.message = 'berhasil menambahkan kategori'
-            response.data = addKategori
         }
     } catch (error) {
         console.log(error);
@@ -54,15 +53,13 @@ const getKategori = async (req, res) => {
     }
 
     try {
-        const queryGetKategori = `SELECT _id_kategori AS id_kategori, _kategori AS kategori, _id_jenis AS id_jenis FROM kategori_ 
-                              WHERE _status=1 AND _id_user= :id_user ${condt}`
+        const queryGetKategori = `SELECT _id_kategori AS id_kategori, _id_jenis AS id_jenis, _kategori AS kategori FROM kategori_ 
+                                WHERE _status=1 AND _id_user= :id_user ${condt}`
 
         const [getKategori] = await queryAll(queryGetKategori, {
             id_user
         })
-
         console.log(getKategori)
-
         if (Object.keys(getKategori).length >= 1) {
             response.success = true;
             response.message = 'Berhasil mengambil data'
@@ -78,28 +75,17 @@ const getKategori = async (req, res) => {
         response.success = false
         response.message = error
     }
-
     return res.status(status).send(response)
 }
 
 const udpateKategori = async (req, res) => {
     let { id_user, kategori, id_jenis, id_kategori } = req.body
     try {
-        const queryCheckKategori = `SELECT _id_kategori AS id_kategori FROM kategori_
-                                WHERE _id_jenis= :id_jenis AND _kategori= :kategori AND _id_user= :id_user AND _status= 1 AND _id_kategori!= :id_kategori`
-        const [checkKategori] = await queryAll(queryCheckKategori, { id_user, kategori, id_jenis, id_kategori })
-        if(Object.keys(checkKategori).length >= 1 ) {
+        const queryUpdateKategori = `UPDATE kategori_ SET _id_jenis= :id_jenis, _kategori= :kategori WHERE _id_kategori= :id_kategori`
+        const udpateKategori = await query(queryUpdateKategori, { id_user, kategori, id_jenis, id_kategori })
+        if(udpateKategori){
             response.success = true;
-            response.message = 'Kategori telah tersedia'
-            response.data = checkKategori;
-        } else {
-            const queryUpdateKategori = `UPDATE kategori_ SET _id_jenis= :id_jenis, _kategori= :kategori WHERE _id_kategori= :id_kategori`
-            const udpateKategori = await query(queryUpdateKategori, { id_user, kategori, id_jenis, id_kategori })
-            if(udpateKategori){
-                response.success = true;
-                response.message = 'Berhasil update kategori'
-                response.data = udpateKategori;
-            }
+            response.message = 'Berhasil update kategori'
         }
     } catch (error) {
         console.log(error);
@@ -119,7 +105,6 @@ const deleteKategori = async (req, res) => {
         if(deleteKategori){
             response.success = true;
             response.message = 'Berhasil hapus kategori'
-            response.data = deleteKategori
         }
     } catch (error) {
         console.log(error);
