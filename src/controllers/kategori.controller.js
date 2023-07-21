@@ -111,4 +111,23 @@ const udpateKategori = async (req, res) => {
     return res.status(status).send(response)
 }
 
-module.exports = { addKategori, getKategori, udpateKategori }
+const deleteKategori = async (req, res) => {
+    let { id_kategori } = req.body
+    try {
+        const queryDeleteKategori = `DELETE FROM kategori_ WHERE _id_kategori= :id_kategori`
+        const [deleteKategori] = await query(queryDeleteKategori, { id_kategori })
+        if(deleteKategori){
+            response.success = true;
+            response.message = 'Berhasil hapus kategori'
+            response.data = deleteKategori
+        }
+    } catch (error) {
+        console.log(error);
+        response.status = 500
+        response.success = false
+        response.message = error
+    }
+    return res.status(status).send(response)
+}
+
+module.exports = { addKategori, getKategori, udpateKategori, deleteKategori }
