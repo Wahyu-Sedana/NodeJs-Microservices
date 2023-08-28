@@ -10,6 +10,8 @@ services:
             - PMA_USER=root
             - PMA_PASSWORD=root
             - PMA_ARBITRARY=1
+        volumes:
+            - phpmyadmin_data:/usr/share/nginx/html/phpmyadmin
     api:
         build:
             context: .
@@ -18,6 +20,13 @@ services:
         ports:
             - "3001:3001"
         container_name: api
+    mysql:
+        image: mysql:latest
+        restart: always
+        environment:
+            - MYSQL_ROOT_PASSWORD=root
+        volumes:
+            - mysql_data:/var/lib/mysql
     nginx:
         restart: always
         image: nginx:latest
@@ -28,3 +37,6 @@ services:
             - "8090:80"
         depends_on:
             - api
+volumes:
+    phpmyadmin_data:
+    mysql_data:
