@@ -2,45 +2,51 @@ version: "3.8"
 services:
   api:
     container_name: api
+    env_file:
+      - ./.env
     build:
       context: .
     environment:
-      PORT: ${PORT}  # Port yang diambil dari .env
-      DB_HOST: db  # Nama layanan database dalam Docker Compose
-      DB_USER: ${DB_USER}  # User yang diambil dari .env
-      DB_PASS: ${DB_PASS}  # Password yang diambil dari .env
-      DB_DATABASE: ${DB_DATABASE}  # Nama database yang diambil dari .env
+      PORT: ${PORT} 
+      DB_HOST: db
+      DB_USER: ${DB_USER} 
+      DB_PASS: ${DB_PASS}  
+      DB_DATABASE: ${DB_DATABASE}  
     ports:
       - "${PORT}:${PORT}"
+    volumes:
+      - node_modules:/main/
     depends_on:
       - db
 
   db:
     container_name: db
+    env_file:
+      - ./.env
     image: mysql:latest
     environment:
-      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASS}  # Password root MySQL dari .env
-      MYSQL_DATABASE: ${DB_DATABASE}  # Nama database yang diambil dari .env
-      MYSQL_USER: ${DB_USER}  # User yang diambil dari .env
-      MYSQL_PASSWORD: ${DB_PASS}  # Password yang diambil dari .env
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASS}  
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASS}
+      MYSQL_DATABASE: ${DB_DATABASE}  
     volumes:
       - "./src/utils/akuntansi.sql:/docker-entrypoint-initdb.d/akuntansi.sql"
+      - db_data:/var/lib/mysql
 
   phpmyadmin:
     container_name: phpmyadmin
-    image: phpmyadmin/phpmyadmin
+    image: phpmyadmin:latest
+    env_file:
+      - ./.env
     ports:
       - "${PMA_PORT}:80"
     environment:
       PMA_HOST: db
-      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASS}  # Password root MySQL dari .env
-
-  nginx:
-    container_name: nginx
-    image: nginx:latest
-    volumes:
-      - "./server:/etc/nginx/conf.d/default"
-    ports:
-      - "${NGINX_PORT}:80"
+      PMA_PORT: 3306
     depends_on:
-      - api
+      - db
+
+volumes:
+  db_data:
+  node_modules:
+
